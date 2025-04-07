@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Подтверждение соглашений</title>
+  <style>
+    body { font-family: sans-serif; margin: 30px; }
+    label { display: block; margin-top: 10px; }
+    input { padding: 5px; width: 300px; }
+    button { margin-top: 20px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h2>Введите данные клиента</h2>
+  <form id="clientForm">
+    <label>Имя: <input type="text" name="firstName" required /></label>
+    <label>Фамилия: <input type="text" name="lastName" required /></label>
+    <label>Отчество: <input type="text" name="middleName" /></label>
+    <label>Дата рождения: <input type="text" name="birthDate" placeholder="дд.мм.гггг" required /></label>
+    <label>Пол:
+      <select name="gender">
+        <option value="М">Мужской</option>
+        <option value="Ж">Женский</option>
+      </select>
+    </label>
+    <label>Номер телефона: <input type="text" name="phone" required /></label>
+
+    <h3>Тестовые вопросы</h3>
+    <label>У вас есть аллергия?
+      <select name="Q1">
+        <option value="Да">Да</option>
+        <option value="Нет">Нет</option>
+      </select>
+    </label>
+
+    <!-- Добавь остальные 14 по шаблону -->
+    
+    <button type="submit">Сформировать документы</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('clientForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const jsonData = {
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        middleName: formData.get("middleName"),
+        birthDate: formData.get("birthDate"),
+        gender: formData.get("gender"),
+        phone: formData.get("phone"),
+        answers: {
+          Q1: formData.get("Q1")
+          // добавь остальные: Q2, Q3 и т.д.
+        }
+      };
+
+      const response = await fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jsonData)
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "agreements.zip";
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        alert("Ошибка при генерации документов.");
+      }
+    });
+  </script>
+</body>
+</html>
