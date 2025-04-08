@@ -1,13 +1,17 @@
 package main
 
 import (
-	"net/http"
+	"archive/zip"
+	"bytes"
+	"fmt"
+	"io"
 	"os"
-	"strconv"
+	"path/filepath"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/phpdave11/gofpdf"
+	"github.com/pdfcpu/pdfcpu/pkg/api"
+	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
 )
 
 type ClientData struct {
@@ -15,71 +19,90 @@ type ClientData struct {
 	LastName   string            `json:"lastName"`
 	MiddleName string            `json:"middleName"`
 	BirthDate  string            `json:"birthDate"`
-	Phone      string            `json:"phone"`
 	Gender     string            `json:"gender"`
+	Phone      string            `json:"phone"`
 	Answers    map[string]string `json:"answers"`
 }
 
 func main() {
 	router := gin.Default()
 
+	// Разрешаем CORS
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"POST", "GET", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type"},
-		AllowCredentials: true,
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"POST", "GET", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type"},
 	}))
-
-	router.StaticFile("/", "../frontend/index.html")
-	router.StaticFile("/style.css", "../frontend/style.css")
 
 	router.POST("/generate", func(c *gin.Context) {
 		var data ClientData
 		if err := c.ShouldBindJSON(&data); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный формат JSON"})
+			c.JSON(400, gin.H{"error": "Ошибка данных формы: " + err.Error()})
 			return
 		}
 
-		pdf := gofpdf.New("P", "mm", "A4", "")
-		pdf.AddUTF8Font("DejaVu", "", "fonts/DejaVuSans.ttf")
-		pdf.AddUTF8Font("DejaVu", "B", "fonts/DejaVuSans-Bold.ttf")
-		pdf.SetFont("DejaVu", "", 14)
-		pdf.AddPage()
+		// Сканируем шаблоны PDF
+		files, err := filepath.Glob("templates/agreement_*.pdf")
+		if err != nil || len(files) == 0 {
+			c.JSON(500, gin.H{"error": "Файлы agreement_*.pdf не найдены в templates/"})
+			return
+		}
 
-		pdf.Cell(0, 10, "Anket məlumatları")
-		pdf.Ln(12)
-		pdf.Cell(0, 10, "Soyad: "+data.LastName)
-		pdf.Ln(8)
-		pdf.Cell(0, 10, "Ad: "+data.FirstName)
-		pdf.Ln(8)
-		pdf.Cell(0, 10, "Ata adı: "+data.MiddleName)
-		pdf.Ln(8)
-		pdf.Cell(0, 10, "Doğum tarixi: "+data.BirthDate)
-		pdf.Ln(8)
-		pdf.Cell(0, 10, "Cins: "+data.Gender)
-		pdf.Ln(8)
-		pdf.Cell(0, 10, "Telefon: "+data.Phone)
-		pdf.Ln(12)
+		buf := new(bytes.Buffer)
+		zipWriter := zip.NewWriter(buf)
 
-		pdf.SetFont("DejaVu", "B", 14)
-		pdf.Cell(0, 10, "Suallar və cavablar:")
-		pdf.Ln(10)
-		pdf.SetFont("DejaVu", "", 13)
+		// Проходим по каждому PDF-шаблону
+		for _, inputPath := range files {
+			tmpOut := inputPath + "_out.pdf"
 
-		for i := 1; i <= 15; i++ {
-			key := "question" + strconv.Itoa(i)
-			answer := data.Answers[key]
-			if answer != "" {
-				pdf.Cell(0, 8, "Sual "+strconv.Itoa(i)+": "+answer)
-				pdf.Ln(6)
+			// Копируем оригинал
+			err := copyFile(inputPath, tmpOut)
+			if err != nil {
+				continue
 			}
+
+			// Список подстановок
+			replacements := map[string]string{
+				"{{Имя}}":      data.FirstName,
+				"{{Фамилия}}":  data.LastName,
+				"{{Отчество}}": data.MiddleName,
+				"{{Дата}}":     data.BirthDate,
+				"{{Пол}}":      data.Gender,
+				"{{Телефон}}":  data.Phone,
+			}
+
+			// Добавим вопросы
+			for i := 1; i <= 15; i++ {
+				key := fmt.Sprintf("{{Вопрос%d}}", i)
+				answer := data.Answers[fmt.Sprintf("question%d", i)]
+				replacements[key] = answer
+			}
+
+			// Заменяем плейсхолдеры
+			for key, value := range replacements {
+				if value == "" {
+					continue
+				}
+				api.AddWatermarksFile(
+					tmpOut, tmpOut,
+					nil,
+					fmt.Sprintf("text:%s, scale:1, pos:tl, op:0.95, replace:%s", value, key),
+					pdfcpu.DefaultConfiguration(),
+				)
+			}
+
+			// Читаем финальный файл
+			modified, _ := os.ReadFile(tmpOut)
+			outFile, _ := zipWriter.Create(filepath.Base(inputPath))
+			outFile.Write(modified)
+			os.Remove(tmpOut)
 		}
 
-		c.Header("Content-Type", "application/pdf")
-		c.Header("Content-Disposition", "attachment; filename=agreement.pdf")
-		if err := pdf.Output(c.Writer); err != nil {
-			c.String(http.StatusInternalServerError, "Ошибка генерации PDF: "+err.Error())
-		}
+		zipWriter.Close()
+
+		c.Header("Content-Type", "application/zip")
+		c.Header("Content-Disposition", "attachment; filename=agreements.zip")
+		c.Data(200, "application/zip", buf.Bytes())
 	})
 
 	port := os.Getenv("PORT")
@@ -87,4 +110,22 @@ func main() {
 		port = "8080"
 	}
 	router.Run(":" + port)
+}
+
+// Копирование PDF
+func copyFile(src, dst string) error {
+	from, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer from.Close()
+
+	to, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer to.Close()
+
+	_, err = io.Copy(to, from)
+	return err
 }
