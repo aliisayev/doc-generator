@@ -22,10 +22,11 @@ type FormData struct {
 }
 
 func main() {
-	http.Handle("/", http.FileServer(http.Dir("./frontend")))
+	// Важно: отдаем frontend из папки выше
+	http.Handle("/", http.FileServer(http.Dir("../frontend")))
 	http.HandleFunc("/submit", submitHandler)
 
-	fmt.Println("Сервер запущен на http://localhost:8080")
+	fmt.Println("Сервер запущен: http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
@@ -59,7 +60,7 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Отдаём файл клиенту
+	// Отдаём клиенту готовый файл
 	w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(outputPath))
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 	http.ServeFile(w, r, outputPath)
@@ -77,10 +78,5 @@ func fillTemplate(templatePath, outputPath string, data map[string]string) error
 	}
 
 	os.MkdirAll("output", os.ModePerm)
-	err = doc.WriteToFile(outputPath)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return doc.WriteToFile(outputPath)
 }
