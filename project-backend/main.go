@@ -29,12 +29,18 @@ type ClientData struct {
 func main() {
 	router := gin.Default()
 
+	// Разрешаем CORS
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"POST", "GET", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type"},
 	}))
 
+	// 📦 Отдача frontend
+	router.StaticFile("/", "../frontend/index.html")
+	router.StaticFile("/style.css", "../frontend/style.css")
+
+	// 📬 Прием данных + генерация PDF
 	router.POST("/generate", func(c *gin.Context) {
 		var data ClientData
 		if err := c.ShouldBindJSON(&data); err != nil {
@@ -82,14 +88,14 @@ func main() {
 					value,
 					"scale:1, pos:tl, op:0.95, replace:"+key,
 					true,
-					types.POINTS, // <--- исправлено
+					types.POINTS,
 				)
 				if err != nil {
 					fmt.Println("Ошибка watermark:", err)
 					continue
 				}
 
-				err = api.AddWatermarksFile(tmpOut, tmpOut, nil, wm, model.NewDefaultConfiguration()) // <--- исправлено
+				err = api.AddWatermarksFile(tmpOut, tmpOut, nil, wm, model.NewDefaultConfiguration())
 				if err != nil {
 					fmt.Println("Ошибка замены:", err)
 					continue
