@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Генерация документов</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Введите данные клиента</h1>
+  <form id="docForm">
+    <input name="lastname" placeholder="Фамилия" required />
+    <input name="name" placeholder="Имя" required />
+    <input name="patronym" placeholder="Отчество" />
+    <input name="birthdate" placeholder="Дата рождения (дд.мм.гггг)" required />
+    <input name="phone" placeholder="Телефон" required />
+    <select name="gender" required>
+      <option value="">Пол</option>
+      <option value="мужской">Мужской</option>
+      <option value="женский">Женский</option>
+    </select>
+
+    <h2>Ответьте на вопросы</h2>
+    <div id="questions"></div>
+
+    <button type="submit">Создать документы</button>
+  </form>
+
+  <script>
+    const questionsDiv = document.getElementById('questions');
+    for (let i = 1; i <= 15; i++) {
+      const label = document.createElement('label');
+      label.textContent = `Вопрос ${i}`;
+      const input = document.createElement('input');
+      input.name = `question${i}`;
+      input.placeholder = `Ответ на вопрос ${i}`;
+      questionsDiv.appendChild(label);
+      questionsDiv.appendChild(input);
+    }
+
+    document.getElementById('docForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    // Преобразуем FormData в объект JSON
+    const jsonData = {
+        firstName: formData.get('name'),
+        lastName: formData.get('lastname'),
+        middleName: formData.get('patronym'),
+        birthDate: formData.get('birthdate'),
+        gender: formData.get('gender'),
+        phone: formData.get('phone'),
+        answers: {}
+    };
+
+    // Добавляем ответы на вопросы
+    for (let i = 1; i <= 15; i++) {
+        const answer = formData.get(`question${i}`);
+        if (answer) {
+            jsonData.answers[i.toString()] = answer;
+        }
+    }
+
+    try {
+        const res = await fetch('http://localhost:8080/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        });
+
+        if (res.ok) {
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'documents.zip';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } else {
+            const error = await res.text();
+            alert('Ошибка при генерации: ' + error);
+        }
+    } catch (err) {
+        alert('Ошибка при отправке запроса: ' + err.message);
+    }
+});
+  </script>
+</body>
+</html>
