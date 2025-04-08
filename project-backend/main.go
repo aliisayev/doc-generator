@@ -12,6 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
+	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
+	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/types"
 )
 
 type ClientData struct {
@@ -27,7 +29,6 @@ type ClientData struct {
 func main() {
 	router := gin.Default()
 
-	// Разрешаем CORS
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"POST", "GET", "OPTIONS"},
@@ -41,7 +42,6 @@ func main() {
 			return
 		}
 
-		// Сканируем шаблоны PDF
 		files, err := filepath.Glob("templates/agreement_*.pdf")
 		if err != nil || len(files) == 0 {
 			c.JSON(500, gin.H{"error": "Файлы agreement_*.pdf не найдены в templates/"})
@@ -51,17 +51,14 @@ func main() {
 		buf := new(bytes.Buffer)
 		zipWriter := zip.NewWriter(buf)
 
-		// Проходим по каждому PDF-шаблону
 		for _, inputPath := range files {
 			tmpOut := inputPath + "_out.pdf"
 
-			// Копируем оригинал
-			err := copyFile(inputPath, tmpOut)
-			if err != nil {
+			if err := copyFile(inputPath, tmpOut); err != nil {
+				fmt.Println("Ошибка копирования файла:", err)
 				continue
 			}
 
-			// Список подстановок
 			replacements := map[string]string{
 				"{{Имя}}":      data.FirstName,
 				"{{Фамилия}}":  data.LastName,
@@ -71,30 +68,39 @@ func main() {
 				"{{Телефон}}":  data.Phone,
 			}
 
-			// Добавим вопросы
 			for i := 1; i <= 15; i++ {
 				key := fmt.Sprintf("{{Вопрос%d}}", i)
-				answer := data.Answers[fmt.Sprintf("question%d", i)]
-				replacements[key] = answer
+				replacements[key] = data.Answers[fmt.Sprintf("question%d", i)]
 			}
 
-			// Заменяем плейсхолдеры
 			for key, value := range replacements {
 				if value == "" {
 					continue
 				}
-				api.AddWatermarksFile(
-					tmpOut, tmpOut,
-					nil,
-					fmt.Sprintf("text:%s, scale:1, pos:tl, op:0.95, replace:%s", value, key),
-					pdfcpu.DefaultConfiguration(),
+
+				wm, err := pdfcpu.ParseTextWatermarkDetails(
+					value,
+					"scale:1, pos:tl, op:0.95, replace:"+key,
+					true,
+					types.POINTS, // <--- исправлено
 				)
+				if err != nil {
+					fmt.Println("Ошибка watermark:", err)
+					continue
+				}
+
+				err = api.AddWatermarksFile(tmpOut, tmpOut, nil, wm, model.NewDefaultConfiguration()) // <--- исправлено
+				if err != nil {
+					fmt.Println("Ошибка замены:", err)
+					continue
+				}
 			}
 
-			// Читаем финальный файл
-			modified, _ := os.ReadFile(tmpOut)
-			outFile, _ := zipWriter.Create(filepath.Base(inputPath))
-			outFile.Write(modified)
+			modified, err := os.ReadFile(tmpOut)
+			if err == nil {
+				outFile, _ := zipWriter.Create(filepath.Base(inputPath))
+				outFile.Write(modified)
+			}
 			os.Remove(tmpOut)
 		}
 
@@ -112,7 +118,6 @@ func main() {
 	router.Run(":" + port)
 }
 
-// Копирование PDF
 func copyFile(src, dst string) error {
 	from, err := os.Open(src)
 	if err != nil {
