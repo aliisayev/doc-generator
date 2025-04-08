@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -43,6 +42,7 @@ func main() {
 
 		pdf := gofpdf.New("P", "mm", "A4", "")
 		pdf.AddUTF8Font("DejaVu", "", "fonts/DejaVuSans.ttf")
+		pdf.AddUTF8Font("DejaVu", "B", "fonts/DejaVuSans-Bold.ttf")
 		pdf.SetFont("DejaVu", "", 14)
 		pdf.AddPage()
 
