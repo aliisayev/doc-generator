@@ -26,9 +26,21 @@ type FormData struct {
 
 func main() {
 	router := gin.Default()
-	router.StaticFile("/", "./frontend/index.html")
+
+	// Настройка CORS
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
+
+	router.StaticFile("/", "./index.html")
 	router.POST("/generate", handleGenerate)
-	router.StaticFile("/", "./frontend/index.html") // отдаём index.html
 
 	router.Run(":8080")
 }
@@ -40,7 +52,7 @@ func handleGenerate(c *gin.Context) {
 		return
 	}
 
-	templatesDir := "./backend/templates"
+	templatesDir := "./project-backend/templates" // Исправленный путь к шаблонам
 	outputFiles := []string{}
 
 	err := filepath.Walk(templatesDir, func(path string, info os.FileInfo, err error) error {

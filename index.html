@@ -2,80 +2,103 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Подтверждение соглашений</title>
+  <title>Генерация документов</title>
   <style>
-    body { font-family: sans-serif; margin: 30px; }
-    label { display: block; margin-top: 10px; }
-    input { padding: 5px; width: 300px; }
-    button { margin-top: 20px; padding: 10px 20px; }
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+    input, select, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
-  <h2>Введите данные клиента</h2>
-  <form id="clientForm">
-    <label>Имя: <input type="text" name="firstName" required /></label>
-    <label>Фамилия: <input type="text" name="lastName" required /></label>
-    <label>Отчество: <input type="text" name="middleName" /></label>
-    <label>Дата рождения: <input type="text" name="birthDate" placeholder="дд.мм.гггг" required /></label>
-    <label>Пол:
-      <select name="gender">
-        <option value="М">Мужской</option>
-        <option value="Ж">Женский</option>
-      </select>
-    </label>
-    <label>Номер телефона: <input type="text" name="phone" required /></label>
+  <h1>Введите данные клиента</h1>
+  <form id="docForm">
+    <input name="lastname" placeholder="Фамилия" required />
+    <input name="name" placeholder="Имя" required />
+    <input name="patronym" placeholder="Отчество" />
+    <input name="birthdate" placeholder="Дата рождения (дд.мм.гггг)" required />
+    <input name="phone" placeholder="Телефон" required />
+    <select name="gender" required>
+      <option value="">Пол</option>
+      <option value="мужской">Мужской</option>
+      <option value="женский">Женский</option>
+    </select>
 
-    <h3>Тестовые вопросы</h3>
-    <label>У вас есть аллергия?
-      <select name="Q1">
-        <option value="Да">Да</option>
-        <option value="Нет">Нет</option>
-      </select>
-    </label>
+    <h2>Ответьте на вопросы</h2>
+    <div id="questions"></div>
 
-    <!-- Добавь остальные 14 по шаблону -->
-    
-    <button type="submit">Сформировать документы</button>
+    <button type="submit">Создать документы</button>
   </form>
 
   <script>
-    const form = document.getElementById('clientForm');
+    const questionsDiv = document.getElementById('questions');
+    for (let i = 1; i <= 15; i++) {
+      const label = document.createElement('label');
+      label.textContent = `Вопрос ${i}`;
+      const input = document.createElement('input');
+      input.name = `question${i}`;
+      input.placeholder = `Ответ на вопрос ${i}`;
+      questionsDiv.appendChild(label);
+      questionsDiv.appendChild(input);
+    }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    document.getElementById('docForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    // Преобразуем FormData в объект JSON
+    const jsonData = {
+        firstName: formData.get('name'),
+        lastName: formData.get('lastname'),
+        middleName: formData.get('patronym'),
+        birthDate: formData.get('birthdate'),
+        gender: formData.get('gender'),
+        phone: formData.get('phone'),
+        answers: {}
+    };
 
-      const formData = new FormData(form);
-      const jsonData = {
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        middleName: formData.get("middleName"),
-        birthDate: formData.get("birthDate"),
-        gender: formData.get("gender"),
-        phone: formData.get("phone"),
-        answers: {
-          Q1: formData.get("Q1")
-          // добавь остальные: Q2, Q3 и т.д.
+    // Добавляем ответы на вопросы
+    for (let i = 1; i <= 15; i++) {
+        const answer = formData.get(`question${i}`);
+        if (answer) {
+            jsonData.answers[i.toString()] = answer;
         }
-      };
+    }
 
-      const response = await fetch('/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jsonData)
-      });
+    try {
+        const res = await fetch('http://localhost:8080/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        });
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = "agreements.zip";
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        alert("Ошибка при генерации документов.");
-      }
-    });
+        if (res.ok) {
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'documents.zip';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } else {
+            const error = await res.text();
+            alert('Ошибка при генерации: ' + error);
+        }
+    } catch (err) {
+        alert('Ошибка при отправке запроса: ' + err.message);
+    }
+});
   </script>
 </body>
 </html>
