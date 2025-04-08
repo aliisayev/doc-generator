@@ -1,88 +1,48 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Генерация PDF</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <title>Форма договора</title>
 </head>
 <body>
-  <div class="container">
-    <h1>Анкета клиента</h1>
-    <form id="clientForm">
-      <label>Имя:<input type="text" name="firstName" required></label>
-      <label>Фамилия:<input type="text" name="lastName" required></label>
-      <label>Отчество:<input type="text" name="middleName" required></label>
-      <label>Дата рождения:<input type="text" name="birthDate" required></label>
-      <label>Телефон:<input type="text" name="phone" required></label>
-      <label>Пол:
-        <select name="gender" required>
-          <option value="">Выберите</option>
-          <option value="Мужской">Мужской</option>
-          <option value="Женский">Женский</option>
-        </select>
-      </label>
-
-      <h2>Ответы на 15 вопросов</h2>
-      <div id="questions"></div>
-
-      <button type="submit">Сгенерировать PDF</button>
+    <h2>Заполните данные</h2>
+    <form id="contractForm">
+        <input name="first_name" placeholder="Имя"><br>
+        <input name="last_name" placeholder="Фамилия"><br>
+        <input name="middle_name" placeholder="Отчество"><br>
+        <input name="birth_date" placeholder="Дата рождения"><br>
+        <input name="phone" placeholder="Телефон"><br>
+        <select name="gender">
+            <option value="Мужской">Мужской</option>
+            <option value="Женский">Женский</option>
+        </select><br>
+        <button type="submit">Скачать договор</button>
     </form>
 
-    <div id="status"></div>
-  </div>
+    <script>
+        const form = document.getElementById('contractForm');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
 
-  <script>
-    const form = document.getElementById("clientForm");
-    const questionsDiv = document.getElementById("questions");
+            const formData = new FormData(form);
+            const json = {};
+            formData.forEach((v, k) => json[k] = v);
 
-    for (let i = 1; i <= 15; i++) {
-      const label = document.createElement("label");
-      label.innerText = `Вопрос ${i}:`;
-      const input = document.createElement("input");
-      input.type = "text";
-      input.name = `question${i}`;
-      label.appendChild(input);
-      questionsDiv.appendChild(label);
-    }
+            const res = await fetch('/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(json)
+            });
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-
-      const data = {
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        middleName: formData.get("middleName"),
-        birthDate: formData.get("birthDate"),
-        phone: formData.get("phone"),
-        gender: formData.get("gender"),
-        answers: {}
-      };
-
-      for (let i = 1; i <= 15; i++) {
-        data.answers["question" + i] = formData.get("question" + i);
-      }
-
-      const res = await fetch("/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "agreement.pdf";
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.getElementById("status").innerText = "PDF успешно сгенерирован.";
-      } else {
-        const err = await res.text();
-        document.getElementById("status").innerText = "Ошибка: " + err;
-      }
-    });
-  </script>
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Договор.docx";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+    </script>
 </body>
 </html>
