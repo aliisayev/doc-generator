@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: docgen-backend
+    env: go
+    plan: free
+    buildCommand: cd project-backend && go build -o app
+    startCommand: ./project-backend/app
+    envVars:
+      - key: PORT
+        value: 8080
+    autoDeploy: true
+    branch: main
+    repo: [https://github.com/aliisayev/doc-generator.git](https://github.com/aliisayev/doc-generator.git)

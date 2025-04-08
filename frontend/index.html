@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Генерация документов</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Введите данные клиента</h1>
+    <form id="clientForm">
+      <label>Имя:<input type="text" name="firstName" required></label>
+      <label>Фамилия:<input type="text" name="lastName" required></label>
+      <label>Отчество:<input type="text" name="middleName" required></label>
+      <label>Дата рождения:<input type="text" name="birthDate" placeholder="дд.мм.гггг" required></label>
+      <label>Номер телефона:<input type="text" name="phone" required></label>
+      <label>Пол:
+        <select name="gender" required>
+          <option value="">Выберите</option>
+          <option value="М">М</option>
+          <option value="Ж">Ж</option>
+        </select>
+      </label>
+
+      <h2>Вопросы:</h2>
+      <div id="questions">
+        <label>У вас есть аллергия?
+          <select name="question1">
+            <option value="Да">Да</option>
+            <option value="Нет">Нет</option>
+          </select>
+        </label>
+        <label>Принимаете ли вы лекарства?
+          <select name="question2">
+            <option value="Да">Да</option>
+            <option value="Нет">Нет</option>
+          </select>
+        </label>
+        <!-- Добавьте остальные 13 вопросов по аналогии -->
+      </div>
+
+      <button type="submit">Сгенерировать документы</button>
+    </form>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    document.getElementById("clientForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+
+      const response = await fetch("http://localhost:8080/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "documents.zip";
+        a.click();
+        document.getElementById("status").innerText = "Файлы успешно сгенерированы!";
+      } else {
+        document.getElementById("status").innerText = "Ошибка при генерации.";
+      }
+    });
+  </script>
+</body>
+</html>
