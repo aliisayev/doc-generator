@@ -3,7 +3,7 @@
 }
 
 body {
-  background-image: url("bg.jpg"); /* 🔁 Путь к твоему фону */
+  background-image: url("bg.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -18,14 +18,13 @@ html, body {
   overflow-y: auto;
 }
 
-/* форма */
 .form-container {
-  max-width: 500px;
-  margin: 80px auto 60px auto;
-  background-color: rgba(255, 255, 255, 0.9); /* 💡 полупрозрачный белый фон */
+  max-width: 600px;
+  margin: 60px auto;
+  background-color: rgba(255, 255, 255, 0.95);
   padding: 30px 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .form-header {
@@ -74,7 +73,43 @@ button {
 }
 
 .question-block {
-  margin-top: 15px;
+  margin-top: 20px;
+}
+
+.question-group {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.question-group > label:first-of-type {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.question-group > label + label {
+  display: inline-block;
+  margin-right: 20px;
+  font-weight: normal;
+  margin-top: 8px;
+}
+
+.question-group input[type="radio"] {
+  margin-left: 6px;
+}
+
+.question-group div {
+  margin-top: 10px;
+}
+
+.question-group label input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.question-group input[type="text"] {
+  margin-top: 8px;
 }
 
 .thanks {
@@ -84,4 +119,32 @@ button {
   font-weight: bold;
   color: green;
   margin-top: 30px;
+}
+
+/* 🔥 Mobile-first адаптация */
+@media screen and (max-width: 600px) {
+  .form-container {
+      margin: 30px 10px;
+      padding: 20px;
+  }
+
+  .form-header {
+      height: 80px;
+  }
+
+  .header-logo {
+      max-height: 60px;
+  }
+
+  input, select, textarea {
+      font-size: 16px;
+  }
+
+  label {
+      font-size: 16px;
+  }
+
+  button {
+      font-size: 18px;
+  }
 }

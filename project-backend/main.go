@@ -28,7 +28,7 @@ type FormData struct {
 	Address     string   `json:"address"`
 	Citizenship string   `json:"citizenship"` // ← вот это!
 	Photo       string   `json:"photo"`
-	Answers     []string `json:"answers"`
+	Answers     []string `json:"answers"` // все ответы из radio/checkbox/input
 	Today       string
 }
 
