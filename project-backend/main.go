@@ -26,8 +26,8 @@ type FormData struct {
 	Gender      string   `json:"gender"`
 	Email       string   `json:"email"`
 	Address     string   `json:"address"`
-	Citizenship string   `json:"citizenship"`
-	Photo       string   `json:"photo"` // base64
+	Citizenship string   `json:"citizenship"` // ← вот это!
+	Photo       string   `json:"photo"`
 	Answers     []string `json:"answers"`
 	Today       string
 }

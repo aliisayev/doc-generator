@@ -28,11 +28,11 @@
 
 <div class="title">Dental implantasiya ilə əlaqədar razılaşma</div>
 
-<p>Bakı şəhəri “_____” __________ 20&nbsp;&nbsp;&nbsp;ci il</p>
+<p>Bakı şəhəri “{{.Today}}” ci il</p>
 
 <p>
-Bir tərəfdən pasient <b>{{.LastName}}, {{.FirstName}}, {{.MiddleName}}</b> (Adı, soyadı, ata adı, ünvanı)<br>
-___________________________________________________________ “sifarişçi” qismində və digər tərəfdən 
+Bir tərəfdən pasient <b>{{.LastName}}, {{.FirstName}}, {{.MiddleName}} {{.Address}}</b> <br>
+“sifarişçi” qismində və digər tərəfdən 
 sonradan “icraçı” adlanan AzDent Stomatoloji klinikası adına İbrahim Məlikli Seyidağa oğlu şəxs qismində dental implantların istifadəsi ilə ortopedik müalicə haqqında birgə müqavilə bağlayır.
 </p>
 
@@ -76,7 +76,7 @@ sonradan “icraçı” adlanan AzDent Stomatoloji klinikası adına İbrahim M�
 
 <br><br>
 <p><b>Pasiyent:</b> {{.FirstName}} {{.LastName}} – {{.Phone}}</p>
-<p><b>Tarix:</b> {{.BirthDate}}</p>
+<p><b>Dogum tarixi:</b> {{.BirthDate}}</p>
 
 </body>
 </html>

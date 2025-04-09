@@ -3,7 +3,11 @@
 }
 
 body {
-  background-color: #2ecc71;
+  background-image: url("bg.jpg"); /* 🔁 Путь к твоему фону */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
@@ -14,13 +18,14 @@ html, body {
   overflow-y: auto;
 }
 
+/* форма */
 .form-container {
   max-width: 500px;
-  margin: 80px auto 60px auto; /* 🔥 отступ сверху и снизу */
-  background-color: #fff;
+  margin: 80px auto 60px auto;
+  background-color: rgba(255, 255, 255, 0.9); /* 💡 полупрозрачный белый фон */
   padding: 30px 40px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .form-header {
@@ -43,6 +48,7 @@ label {
   margin-top: 10px;
   font-size: 14px;
   font-weight: 600;
+  color: #333;
 }
 
 input, select, textarea {
