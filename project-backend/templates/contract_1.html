@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body {
-            font-family: 'DejaVu Sans', sans-serif;
+              body {
+            font-family: 'DejaVu', sans-serif;
             padding: 40px;
             line-height: 1.6;
             font-size: 14pt;
@@ -31,7 +31,7 @@
 <p>Bakı şəhəri {{.Today}} - ci il</p>
 
 <p>
-Bir tərəfdən AzDent Stomatoloji Klinikası adından Məlikli İbrahim Fuad oğlu (bundan sonra - Klinika adlandırılacaq), digər tərəfdən ______________________________ vətəndaşı {{.LastName}}, {{.FirstName}}, {{.MiddleName}}{{genderWord .Gender}} şəxsində (bundan sonra - Xəstə adlandırılacaq) tərəfindən aşağıdakı şərtlərlə bu müqaviləni bağladılar.
+Bir tərəfdən AzDent Stomatoloji Klinikası adından Məlikli İbrahim Fuad oğlu (bundan sonra - Klinika adlandırılacaq), digər tərəfdən {{Citizenship}} vətəndaşı {{.LastName}}, {{.FirstName}}, {{.MiddleName}}{{genderWord .Gender}} şəxsində (bundan sonra - Xəstə adlandırılacaq) tərəfindən aşağıdakı şərtlərlə bu müqaviləni bağladılar.
 </p>
 
 <h3>1. Müqavilənin predmeti</h3>
@@ -125,8 +125,8 @@ Bir tərəfdən AzDent Stomatoloji Klinikası adından Məlikli İbrahim Fuad o�
 Məlikli İbrahim Fuad oğlu<br>
 ________________ (imza) M.Y.<br><br>
 
-<b>Xəstə</b><br>
-{{.LastName}}, {{.FirstName}}, {{.MiddleName}}{{genderWord .Gender}}<br>
+                                <b>Xəstə</b><br>
+                 {{.LastName}}, {{.FirstName}}, {{.MiddleName}}{{genderWord .Gender}}<br>
 ______________ (imza)
 
 </body>
