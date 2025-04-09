@@ -8,7 +8,10 @@
 <body>
 
 <div class="form-container">
-    <div class="form-header">[ Burada şəkil olacaq yer ]</div>
+    <div class="form-header">
+        <img src="logo.png" alt="Logo" class="header-logo">
+    </div>
+
     <form id="contractForm">
         <label>Ad:</label>
         <input name="first_name" required />
@@ -33,12 +36,14 @@
 
         <div id="questionsContainer" class="question-block"></div>
 
-        <button type="submit">Müqaviləni yüklə</button>
+        <button type="submit">Müqavilələri yüklə (PDF)</button>
     </form>
 </div>
 
 <script>
     const questions = [
+        "Avans ödənişi nə qədərdir?",
+        "Əlavə qeydiniz varmı?",
         "Hər hansısa allergiyanız varmı?",
         "Hazırda hansı dərmanları qəbul edirsiniz?",
         "1-dən 10-a qədər ağrı səviyyəsini qiymətləndirin"
@@ -84,11 +89,12 @@
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "";
+        a.download = "contracts.zip";
         document.body.appendChild(a);
         a.click();
         a.remove();
     };
 </script>
+
 </body>
 </html>

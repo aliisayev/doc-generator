@@ -7,6 +7,7 @@ body {
   height: 100vh;
   margin: 0;
 }
+
 .form-container {
   background-color: #fff;
   width: 400px;
@@ -15,6 +16,7 @@ body {
   box-shadow: 0 6px 10px rgba(0,0,0,0.1);
   position: relative;
 }
+
 .form-header {
   height: 100px;
   background-color: #e0e0e0;
@@ -23,15 +25,20 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #888;
-  font-size: 14px;
 }
+
+.header-logo {
+  max-height: 80px;
+  object-fit: contain;
+}
+
 label {
   display: block;
   margin-top: 10px;
   font-size: 14px;
   font-weight: 600;
 }
+
 input, select {
   width: 100%;
   padding: 8px;
@@ -41,6 +48,7 @@ input, select {
   box-sizing: border-box;
   font-size: 14px;
 }
+
 button {
   width: 100%;
   margin-top: 20px;
@@ -53,6 +61,7 @@ button {
   cursor: pointer;
   font-size: 16px;
 }
+
 .question-block {
   margin-top: 15px;
 }
