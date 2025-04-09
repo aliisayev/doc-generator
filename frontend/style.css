@@ -1,20 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: #2ecc71;
   font-family: 'Segoe UI', sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
   margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100%;
+  overflow-y: auto;
 }
 
 .form-container {
+  max-width: 500px;
+  margin: 80px auto 60px auto; /* 🔥 отступ сверху и снизу */
   background-color: #fff;
-  width: 400px;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 6px 10px rgba(0,0,0,0.1);
-  position: relative;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .form-header {
@@ -39,13 +45,12 @@ label {
   font-weight: 600;
 }
 
-input, select {
+input, select, textarea {
   width: 100%;
   padding: 8px;
   margin-top: 4px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-sizing: border-box;
   font-size: 14px;
 }
 

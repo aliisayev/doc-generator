@@ -23,12 +23,38 @@
         <input type="date" name="birth_date" required />
         <label>Əlaqə nömrəsi:</label>
         <input name="phone" required />
+        <label>E-mail:</label>
+        <input name="email" type="email" required />
+        <label>Ünvan:</label>
+        <input name="address" required />
+
         <label>Cins:</label>
         <select name="gender" required>
             <option value="Kişi">Kişi</option>
             <option value="Qadın">Qadın</option>
         </select>
+
+        <label>Vətəndaşlıq:</label>
+        <select name="citizenship" id="citizenshipSelect" required>
+            <option value="">Seçin...</option>
+            <option value="Azərbaycan">Azərbaycan</option>
+            <option value="Türkiyə">Türkiyə</option>
+            <option value="Rusiya">Rusiya</option>
+            <option value="Gürcüstan">Gürcüstan</option>
+            <option value="Ukrayna">Ukrayna</option>
+            <option value="Digər">Digər</option>
+        </select>
+
+        <div id="otherCitizenshipField" style="display:none; margin-top: 8px;">
+            <input type="text" id="otherCitizenshipInput" placeholder="Vətəndaşlığı qeyd edin..." />
+        </div>
+
+        <label>Şəkil yüklə:</label>
+        <input type="file" id="photoUpload" accept="image/*" />
+        <div id="photoPreview" style="margin-top:10px;"></div>
+
         <div id="questionsContainer" class="question-block"></div>
+
         <button type="submit">Təsdiqlə</button>
     </form>
 
@@ -55,12 +81,37 @@
         container.appendChild(input);
     });
 
+    document.getElementById("citizenshipSelect").addEventListener("change", function() {
+        const isOther = this.value === "Digər";
+        document.getElementById("otherCitizenshipField").style.display = isOther ? "block" : "none";
+    });
+
+    document.getElementById("photoUpload").addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = new Image();
+                img.src = reader.result;
+                img.style.maxWidth = "100%";
+                document.getElementById("photoPreview").innerHTML = "";
+                document.getElementById("photoPreview").appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
     document.getElementById("contractForm").onsubmit = async function(e) {
         e.preventDefault();
 
         const form = e.target;
         const formData = new FormData(form);
         const answers = questions.map((_, i) => formData.get(`q${i}`));
+
+        const citizenship = formData.get("citizenship") === "Digər"
+            ? document.getElementById("otherCitizenshipInput").value
+            : formData.get("citizenship");
+
         const data = {
             first_name: formData.get("first_name"),
             last_name: formData.get("last_name"),
@@ -68,9 +119,26 @@
             birth_date: formData.get("birth_date"),
             phone: formData.get("phone"),
             gender: formData.get("gender"),
+            email: formData.get("email"),
+            address: formData.get("address"),
+            citizenship: citizenship,
             answers: answers
         };
 
+        const file = document.getElementById("photoUpload").files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                data.photo = reader.result;
+                await sendForm(data);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            await sendForm(data);
+        }
+    };
+
+    async function sendForm(data) {
         await fetch("/submit", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -79,7 +147,7 @@
 
         document.getElementById("contractForm").style.display = "none";
         document.getElementById("thanksMessage").style.display = "block";
-    };
+    }
 </script>
 
 </body>
