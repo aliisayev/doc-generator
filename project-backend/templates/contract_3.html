@@ -28,54 +28,134 @@
 
 <div class="title">STOMATOLOJİ XİDMƏT MÜQAVİLƏSİ №</div>
 
-<p>Bakı şəhəri {{.Today}} - ci il</p>
+<p>Xəstə Anamnez Forması</p>
 
 <p>
-    Bir tərəfdən pasient {{.LastName}}, {{.FirstName}}, {{.MiddleName }} {{.Gender}} {{.Citizenship}} vətəndaşı “sifarişçi” qismində və digər    
-    tərəfdən sonradan “icraçı” adlanan AzDent Stomatoloji klinikası adına İbrahim Məlikli Seyidağa oğlu şəxs qismində dental implantların istifadəsi ilə ortopedik müalicə haqqında birgə müqavilə bağlayır.
+    HÖRMƏTLİ PASİYENT!
+    Stomatoloji müalicə prosesinə ümumi xəstəliklər təsir göstərə bilər, buna görə də bu anketi diqqətlə doldurmağınızı xahiş edirik.
+    Biz zəmanət veririk ki, anketdə qeyd etdiyiniz məlumatlar yalnız sağlamlığınızı nəzərə alaraq müalicənizi seçmək üçün istifadə olunacaq və üçüncü şəxslərə təqdim edilməyəcəkdir.
+    
+    ANKET (pasiyent tərəfindən doldurulur)
+    
     
 </p>
 
-<h3>1. Müqavilənin tərkibi</h3>
-<p> 1.1. Sifarişçi (pasiyent) tam etibarlılıq ifadə etməli, icraçı (müalicə müəssisəsi) isə dental implant istifadə etməklə ortopedik müalicənin kompleks proqramını öz üzərinə götürməli  və növbəti qarşılıqlı öhdəlikləri yerinə yetirərkən keyfiyyət barədə zəmanət  verməlidir.</p>
+<h3>Xəstə Məlumatları</h3>
+<p> {{.LastName}}, {{.FirstName}}, {{.MiddleName }} 	Doğum tarixi: {{.Date}}	Cins: {{.Gender}}	Vətəndəşı: {{.Citizenship}} {{.Phone}} {{.Address}}</p>
 
-<h3> 2.	Tərəflərin öhdəçiliyi.</h3>
-<p> 2.1.	 İcraçının öhdəçiliyi.
-    a)	Pasiyentə reabilitasiya dövründə 1 (bir) il və həmçinin sonrakı dövrlərdə dental implantasiyadan sonra baş verə biləcək ağırlaşmalar barədə məlumat vermək. 
-    b)	İmplanta dayaq olan protezlərdən istifadə və profilaktik tədbirlərə riayət edilməsi barədə məlumat vermək. 
-    c)	Pasiyenti müntəzəm müalicə etmək və ağız boşluğunun gigiyenasına həm implantasiya əməliyyatından sonra həm də protezləşmədən sonra – reabilitasiya dövründə nəzarət etmək.
-    d)	Pasiyentin həkim-stomatoloqun qəbuluna gəlmə vaxtlarını razılaşdırmaq.
-    e)	Xidmətin keyfiyyətinə qarşi iradlar olduqda, xüsusəndə icraçının səhvindən implantansiyanın nəticəsi uğursuz olduqda 1 (bir) il müddətində pasiyentin istəyi ilə implantasiya ya  pulsuz təkrar olunmalı, ya da sərf olunan material və dərmanlar nəzərə alınmadan tibbi xidmətin nominal dəyəri pasiyentə qaytarılır
-    2.2.	Sifarişçinin öhdəçiliyi.
-    a)	Dental  implantasiyaya razılıq haqqında anketdə verilmiş informasiya ilə tanış olmalı və xüsusi məsuliyyət daşıdığını təsdiq etməlidir.  
-    b)	Ağız boşluğu gigiyenasına, implantlara və diş protezlərinə profilaktik qulluğa aid həkim məsləhətlərinə riayət etmək.
-    c)	Kontrol və profilaktik müayinə məqsədi ilə həkim stomatoloqa lazımı vaxtlarda    müraciət etməli, reabilitasiya dövründə isə 1 (bir) il razılaşdırılmış vaxtlarda müntəzəm müraciət etməlidir.
-    d)	Protezdən, habelə implantlardan istifadə zamanı əmələ gələn çatışmazlıq haqqında başqa müəssisələrə müraciət etmədən yalnız öz müalicə həkiminə müraciət etməlidir.
-    e)	Dental implantasiya ilə əlaqədar bütün kompleks müalicə tədbirlərini yalnız öz müalicə həkimi həyata keçirməlidir.
-   </p>
+<h3> Sağlamlıq vəziyyətim haqqında aşağıdakıları bildirirəm:</h3>
+<p> Sonuncu dəfə stomatoloq müayinəsi: (Ay və ili qeyd edin) 		_______/ 20__
+
+    Hər hansı diş müalicəsi zamanı allergiyanız olubmu?		☐ Bəli ☐ Xeyr
+    
+    Anesteziyaya qarşı həssaslıq və ya allergiya varmı?		☐ Bəli ☐ Xeyr
+    Qan qrupunuz:								            ____________
+   
+     </p>
 
 
-    <h3> 3.	İşin dəyəri və xərclərin ödənilməsi  qaydası.</h3>
-    <p> 3.1.	İmplant tədbiq edilməklə kompleks stomatoloji müalicə proqramını həyata keçirərkən sifarişçi xərcləri preyskuranta görə faktik göstərilmiş tibbi yardımın həcminə əsasən ödəyir.
-        3.2.	Avans ödənişi ________________________________________________________
-                               (qiyməti sözlə yazmalı)        
-       </p>
+     <h3>Aşağıdakı xəstəliklərdən əziyyət çəkirsinizmi?</h3>
+     <h3>Ürək-damar xəstəlikləri </h3>
+     <p>Revmakardit: {{index .Answers 0}}</p>
+     <p>Miokard infarktı : {{index .Answers 1}}</p>
+     <p>Oynaqların kəskin revmatizmi: {{index .Answers 2}}</p>
+     <p>Böyrək xəstəlikləri: {{index .Answers 3}}</p>
+     <p>Stenokardiya: {{index .Answers 4}}</p>
+     <p>Ürək çatışmazlığı: {{index .Answers 5}}</p>
+     <p>Digər: {{index .Answers 6}}</p>
+     
+     <h3>Arterial təzyiq</h3>
+     <p>Hipertenziya: {{index .Answers 7}}</p>
+     <p>Hipotenziya: {{index .Answers 8}}</p>
+     
+     <h3>Qan sisteminin xəstəlikləri</h3>
+     <p>Hemorragik diatez: {{index .Answers 9}}</p>
+     <p>Anemiya: {{index .Answers 10}}</p>
+     <p>Laxtalanma sisteminin anomaliyası: {{index .Answers 11}}</p>
+     <p>Leykemiya: {{index .Answers 12}}</p>
+     <p>Digər: {{index .Answers 13}}</p>
 
-       <h3> 4.Xüsusi şərait.</h3>
- <p> 4.1.	Gözlənilmədən əməliyyatdan imtina edilməsi hallarında icraçı, konsultativ-diaqnostik xidmətlərin dəyəri daxil edilmədən qalan ödənilən xərcləri sifarişçiyə qaytarır.
-    4.2.	Sifarişçinin səhvi üzündən, yəni ağız boşluğu qiqiyenasına pis riayət edilməsi, razılaşdırılmış vaxtlarda həkimə müraciət etmədikdə tibbi ağırlaşmalar baş verərsə, icraçı heç bir maliyyə məsuliyyəti daşımır.
-    4.3.	Diş protezinin konstruksiyası sifarişçinin imkan daxilində istəyi nəzərə alınmaqla əsasən icraçı tərəfindən təyin edilir. Əgər pasiyent tibbi cəhətdən məqsədəuyğun olmayan konstruksiyaya israrlıdırsa, onda müqavilə pozulmuş olur və pasiyent müalicəyə sərf olunan maliyyə xərcini özü  daşıyır.
-    4.4.	İcraçı sifarişçiyə implant tətbiq edilmiş diş protezinin funksional dəyərinə 5 (beş) il zəmanət verir. Zəmanət müddəti protezin təhvili vaxtından hesab olunur.
-    4.5.	Reabilitasiya dövründə sifarişçidən asılı olmayaraq  gözlənilmədən ağırlaşmalar baş verərsə, icraçı implant və məsləhət xidmətlərinin dəyərini nəzərə almadan ödənilmiş xərcləri pasiyentə qaytarır və ya pulsuz təkrar müalicə aparır. 
-   </p>
+     <h3>QBB xəstəlikləri </h3>
+<p>Frontal Sinusit: {{index .Answers 14}}</p>
+<p>Maksillar Sinusit: {{index .Answers 15}}</p>
+<p>Tonzil Hipertrofiyası: {{index .Answers 16}}</p>
+<p>Digər: {{index .Answers 17}}</p>
 
-    <h3> 5.	Yoxlama qaydası.</h3>
-    <p> 5.1. Aparılmış tibbi xidmətin həcmi və keyfiyyətinin yoxlanması müalicə müəssisəsinin müdiriyyəti tərəfindən həyata keçirilir, lazım gəldikdə isə səhiyyə orqanlarının mütəxəssisləri yoxlama prosesinə cəlb olunur.</p>
+<h3>Ağciyər xəstəlikləri</h3>
+<p>Astma: {{index .Answers 18}}</p>
+<p>Keçirilmiş tuberkulyoz: {{index .Answers 19}}</p>
+<p>QİÇS: {{index .Answers 20}}</p>
+<p>Kimya terapiya: {{index .Answers 21}}</p>
+<p>Hemorragik diatez: {{index .Answers 22}}</p>
+<p>Anemiya: {{index .Answers 23}}</p>
+<p>Laxtalanma sisteminin anomaliyası: {{index .Answers 24}}</p>
+<p>Leykemiya: {{index .Answers 25}}</p>
+<p>Digər: {{index .Answers 26}}</p>
 
-       
-<h3>Müqavilə tərəflərinin imzası. <br>
+<h3>Psixo-nevroloji xəstəlikləri</h3>
+<p>Epilepsiya: {{index .Answers 27}}</p>
+<p>Nevralgiyalar: {{index .Answers 28}}</p>
+<p>Paraliç: {{index .Answers 29}}</p>
+<p>Psixiatrik müalicə: {{index .Answers 30}}</p>
+<p>Digər: {{index .Answers 31}}</p>
 
-   <br> Sifarişçi _____________________                                                 İcraçı________________________
+
+<h3>Qaraciyər xəstəlikləri</h3>
+<p>Hepatit A: {{index .Answers 32}}</p>
+<p>Hepatit B: {{index .Answers 33}}</p>
+<p>Hepatit C: {{index .Answers 34}}</p>
+<p>Qaraciyər çatışmazlığı: {{index .Answers 35}}</p>
+<p>Digər: {{index .Answers 36}}</p>
+
+<h3>Endokrin xəstəlikləri</h3>
+<p>Diabet: {{index .Answers 37}}</p>
+<p>Hipotireoz: {{index .Answers 38}}</p>
+<p>Paratireoz: {{index .Answers 39}}</p>
+<p>Hipertireoz: {{index .Answers 40}}</p>
+<p>Digər: {{index .Answers 41}}</p>
+
+<h3>Mədə-bağırsaq xəstəlikləri</h3>
+<p>Xora: {{index .Answers 42}}</p>
+<p>Qastrit: {{index .Answers 43}}</p>
+<p>Digər: {{index .Answers 44}}</p>
+
+<h3>İstifadə edilən dərmanlar</h3>
+<p>Antihistamin dərmanlar: {{index .Answers 45}}</p>
+<p>Antiepileptiklər: {{index .Answers 46}}</p>
+<p>İnsulin: {{index .Answers 47}}</p>
+<p>Antihipertenziv: {{index .Answers 48}}</p>
+<p>Hormonal preparatlar: {{index .Answers 49}}</p>
+<p>Ürək dərmanları: {{index .Answers 50}}</p>
+<p>Neyroleptiklər: {{index .Answers 51}}</p>
+<p>Sitostatiklər: {{index .Answers 52}}</p>
+<p>Antikoaqulyantlar: {{index .Answers 53}}</p>
+<p>Digər: {{index .Answers 54}}</p>
+
+
+<h3>Hamiləlik</h3>
+<p>(həftə): {{index .Answers 55}}</p>
+
+<h3>Vərdişlər  </h3>
+<p>Alkoqol: {{index .Answers 56}}</p>
+<p>Brüksizm: {{index .Answers 57}}</p>
+<p>Siqaret çəkirsinizmi: {{index .Answers 58}}</p>
+<p>Digər: {{index .Answers 59}}</p>
+
+<h3>Əlavə qeydlər:</h3>
+<p>Mən anketdə göstərilən bütün suallara səmimi cavab verdim və sağlamlıq vəziyyətim haqqında əlavə olaraq aşağıdakıları bildirmək istəyirəm:
+    Mənə məlumdur ki, yalnız mütəmadi profilaktik müayinələr (hər 6 aydan bir) müalicə və protezlərin uzunmüddətli nəticələrini təmin edə bilər.
+    Stomatoloqa müraciət etməmişdən öncə hər hansı dərman qəbul etdiyim təqdirdə, bunu həkimə bildirməli olduğumu başa düşürəm.
+    </p>
+
+
+<h3> Pasiyentin imzası	:____________
+
+
+
+
+
+    Tarix			: {{.Today}}
+    
     </h3>
 
 </body>

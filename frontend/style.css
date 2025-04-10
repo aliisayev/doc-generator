@@ -87,21 +87,42 @@ button {
 .question-group > label:first-of-type {
   font-weight: bold;
   margin-bottom: 8px;
+  display: block;
 }
 
 .question-group > label + label {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-right: 20px;
   font-weight: normal;
   margin-top: 8px;
 }
 
 .question-group input[type="radio"] {
-  margin-left: 6px;
+  margin: 0;
 }
 
 .question-group div {
   margin-top: 10px;
+}
+
+.question-group .subquestion {
+  margin-top: 8px;
+  padding-left: 10px;
+}
+
+.question-group .subquestion > div {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.question-group .subquestion label {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 16px;
+  gap: 6px;
+  font-weight: normal;
 }
 
 .question-group label input[type="checkbox"] {
@@ -110,6 +131,7 @@ button {
 
 .question-group input[type="text"] {
   margin-top: 8px;
+  width: 100%;
 }
 
 .thanks {
@@ -120,6 +142,7 @@ button {
   color: green;
   margin-top: 30px;
 }
+
 
 /* 🔥 Mobile-first адаптация */
 @media screen and (max-width: 600px) {
