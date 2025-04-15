@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url('/frontend/bg3.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .status span {
+      font-size: 1.1em;
+    }
+
+    .card-view .contract-card {
+      transition: all 0.3s ease;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    .card-view .contract-card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 0 16px rgba(0,0,0,0.15);
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .status-waiting {
+      color: #198754;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-dark px-3 mb-4">
+    <span class="navbar-brand d-flex align-items-center">
+      <img src="/frontend/logo.jpg" alt="Logo" style="width: 48px; height: 48px; object-fit: contain;">
+      <span class="ms-3">Müqavilə Paneli</span>
+    </span>
+    <button class="btn btn-outline-light btn-sm ms-auto" onclick="toggleView()">
+      <i class="fas fa-th-large"></i> Dəyiş görünüş
+    </button>
+  </nav>
+
+  <div class="container bg-white p-4 rounded shadow">
+    <h3 class="mb-4">📋 Bütün göndərilən anketlər</h3>
+
+    <div class="filter-bar">
+      <input id="searchInput" class="form-control" placeholder="Axtarış: ID, tarix və ya ad..." oninput="filterRows()" style="flex:1; max-width: 250px;">
+      <select id="statusFilter" class="form-select w-auto" onchange="filterRows()">
+        <option value="all">Hamısı</option>
+        <option value="sent">Göndərilib</option>
+        <option value="waiting">Gözləyir</option>
+      </select>
+    </div>
+
+    <!-- Табличный режим -->
+    <div id="tableView" class="table-responsive">
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Ad Soyad</th>
+            <th>Tarix</th>
+            <th>Status</th>
+            <th>Bax</th>
+            <th>Telegram</th>
+            <th>Sil</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          {{range .}}
+          <tr class="contract-row" data-status="{{if .Sent}}sent{{else}}waiting{{end}}" data-search="{{.ID}} {{.CreatedAt.Format "02.01.2006 15:04"}} {{.Form.FirstName}} {{.Form.LastName}}">
+            <td>#{{.ID}}</td>
+            <td>{{.Form.FirstName}} {{.Form.LastName}}</td>
+            <td>{{.CreatedAt.Format "02.01.2006 15:04"}}</td>
+            <td class="status">
+              {{if .Sent}}
+                <span class="text-success"><i class="fas fa-check-circle"></i> Göndərilib</span>
+              {{else}}
+                <span class="status-waiting"><i class="fas fa-hourglass-half"></i> Gözləyir</span>
+              {{end}}
+            </td>
+            <td>
+              <a class="btn btn-outline-primary btn-sm btn-icon" href="/admin/contracts/{{.ID}}">
+                <i class="fas fa-eye"></i> Bax
+              </a>
+            </td>
+            <td>
+              {{if not .Sent}}
+              <form action="/admin/send/{{.ID}}" method="POST">
+                <button class="btn btn-success btn-sm btn-icon" type="submit">
+                  <i class="fas fa-paper-plane"></i> Göndər
+                </button>
+              </form>
+              {{else}}
+              <span class="text-muted"><i class="fas fa-check"></i></span>
+              {{end}}
+            </td>
+            <td>
+              <form action="/admin/delete/{{.ID}}" method="POST" onsubmit="return confirm('Bu müqaviləni silmək istədiyinizə əminsiniz?')">
+                <button class="btn btn-outline-danger btn-sm btn-icon" type="submit">
+                  <i class="fas fa-trash-alt"></i> Sil
+                </button>
+              </form>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Карточки -->
+    <div id="cardView" class="row card-view d-none">
+      {{range .}}
+      <div class="col-md-6 col-lg-4 mb-4 contract-card" data-status="{{if .Sent}}sent{{else}}waiting{{end}}" data-search="{{.ID}} {{.CreatedAt.Format "02.01.2006 15:04"}} {{.Form.FirstName}} {{.Form.LastName}}">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">#{{.ID}} - {{.Form.FirstName}} {{.Form.LastName}}</h5>
+            <p><strong>Tarix:</strong> {{.CreatedAt.Format "02.01.2006 15:04"}}</p>
+            <p><strong>Status:</strong>
+              {{if .Sent}}
+                <span class="text-success"><i class="fas fa-check-circle"></i> Göndərilib</span>
+              {{else}}
+                <span class="status-waiting"><i class="fas fa-hourglass-half"></i> Gözləyir</span>
+              {{end}}
+            </p>
+            <a href="/admin/contracts/{{.ID}}" class="btn btn-outline-primary btn-sm btn-icon">
+              <i class="fas fa-eye"></i> Bax
+            </a>
+            {{if not .Sent}}
+            <form action="/admin/send/{{.ID}}" method="POST" class="d-inline">
+              <button class="btn btn-success btn-sm btn-icon">
+                <i class="fas fa-paper-plane"></i> Göndər
+              </button>
+            </form>
+            {{end}}
+            <form action="/admin/delete/{{.ID}}" method="POST" class="d-inline" onsubmit="return confirm('Bu müqaviləni silmək istədiyinizə əminsiniz?')">
+              <button class="btn btn-outline-danger btn-sm btn-icon">
+                <i class="fas fa-trash-alt"></i> Sil
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {{end}}
+    </div>
+  </div>
+
+  <script>
+    function toggleView() {
+      const table = document.getElementById("tableView");
+      const cards = document.getElementById("cardView");
+      const isTable = !table.classList.contains("d-none");
+      if (isTable) {
+        table.classList.add("d-none");
+        cards.classList.remove("d-none");
+        localStorage.setItem("viewMode", "cards");
+      } else {
+        cards.classList.add("d-none");
+        table.classList.remove("d-none");
+        localStorage.setItem("viewMode", "table");
+      }
+    }
+
+    function filterRows() {
+      const searchVal = document.getElementById("searchInput").value.toLowerCase();
+      const statusVal = document.getElementById("statusFilter").value;
+
+      const rows = document.querySelectorAll(".contract-row");
+      rows.forEach(row => {
+        const matchesSearch = row.dataset.search.toLowerCase().includes(searchVal);
+        const matchesStatus = statusVal === "all" || row.dataset.status === statusVal;
+        row.style.display = matchesSearch && matchesStatus ? "" : "none";
+      });
+
+      const cards = document.querySelectorAll(".contract-card");
+      cards.forEach(card => {
+        const matchesSearch = card.dataset.search.toLowerCase().includes(searchVal);
+        const matchesStatus = statusVal === "all" || card.dataset.status === statusVal;
+        card.style.display = matchesSearch && matchesStatus ? "" : "none";
+      });
+    }
+
+    window.onload = () => {
+      const mode = localStorage.getItem("viewMode") || "table";
+      if (mode === "cards") toggleView();
+    };
+  </script>
+</body>
+</html>

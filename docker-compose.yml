@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./project-backend
+    container_name: contract-app
+    ports:
+      - "8090:9080"
+    restart: always

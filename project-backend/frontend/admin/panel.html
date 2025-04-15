@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h2>📋 Bütün göndərilən anketlər</h2>
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th>
+            <th>Tarix</th>
+            <th>Status</th>
+            <th>Bax</th>
+            <th>Telegram</th>
+        </tr>
+        {{range .}}
+        <tr>
+            <td>{{.ID}}</td>
+            <td>{{.CreatedAt}}</td>
+            <td>{{if .Sent}}✅ Göndərildi{{else}}❌ Göndərilməyib{{end}}</td>
+            <td><a href="/admin/contracts/{{.ID}}">📄 Aç</a></td>
+            <td>
+                {{if not .Sent}}
+                <form action="/admin/send/{{.ID}}" method="POST" style="margin:0;">
+                    <button type="submit">Telegrama göndər</button>
+                </form>
+                {{else}}✔️{{end}}
+            </td>
+        </tr>
+        {{end}}
+    </table>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Giriş</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url('../frontend/bg2.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.6);
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-box .form-control {
+      margin-bottom: 15px;
+    }
+
+    .logo-img {
+  width: 180px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+
+    .text-center .title {
+      font-weight: bold;
+      font-size: 1.4em;
+      margin-top: 10px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="login-box">
+      <div class="text-center">
+        <img src="../frontend/logo.jpg" alt="Logo" style="width: 140px; height: 48px; object-fit: contain;">
+        <div class="title">Admin Panelə Giriş</div>
+      </div>
+
+      <form method="POST" action="/admin/login" class="mt-4">
+        <div class="form-floating">
+          <input type="text" class="form-control" name="username" id="username" placeholder="İstifadəçi adı" required>
+          <label for="username"><i class="fas fa-user"></i> İstifadəçi adı</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="password" class="form-control" name="password" id="password" placeholder="Şifrə" required>
+          <label for="password"><i class="fas fa-lock"></i> Şifrə</label>
+        </div>
+
+        <button type="submit" class="btn btn-dark w-100 mt-3">
+          <i class="fas fa-sign-in-alt"></i> Giriş
+        </button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

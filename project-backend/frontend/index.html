@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müqavilə Anketi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="form-container">
+    <div class="form-header">
+        <img src="logo.png" alt="Logo" class="header-logo">
+    </div>
+
+    <form id="contractForm">
+        <label>Ad:</label>
+        <input name="first_name" required />
+        <label>Soyad:</label>
+        <input name="last_name" required />
+        <label>Ata adı:</label>
+        <input name="middle_name" required />
+        <label>Doğum tarixi:</label>
+        <input type="date" name="birth_date" required />
+        <label>Əlaqə nömrəsi:</label>
+        <input name="phone" required />
+        <label>E-mail:</label>
+        <input name="email" type="email" required />
+        <label>Ünvan:</label>
+        <input name="address" required />
+
+        <label>Cins:</label>
+        <select name="gender" id="genderSelect" required>
+            <option value="Kişi">Kişi</option>
+            <option value="Qadın">Qadın</option>
+        </select>
+
+        <label>Vətəndaşlıq:</label>
+        <select name="citizenship" id="citizenshipSelect" required>
+            <option value="">Seçin...</option>
+            <option value="Azərbaycan">Azərbaycan</option>
+            <option value="Türkiyə">Türkiyə</option>
+            <option value="Rusiya">Rusiya</option>
+            <option value="Gürcüstan">Gürcüstan</option>
+            <option value="Ukrayna">Ukrayna</option>
+            <option value="Digər">Digər</option>
+        </select>
+        <div id="otherCitizenshipField" style="display:none; margin-top: 8px;">
+            <input type="text" id="otherCitizenshipInput" placeholder="Vətəndaşlığı qeyd edin..." />
+        </div>
+
+        <label>Şəkil yüklə:</label>
+        <input type="file" id="photoUpload" accept="image/*" />
+        <div id="photoPreview" style="margin-top:10px;"></div>
+
+        <div id="medicalGroups" class="question-block"></div>
+
+        <button type="submit">Təsdiqlə</button>
+    </form>
+
+    <div id="thanksMessage" class="thanks">✅ Təşəkkür edirik, sənədləriniz qəbul olundu</div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const medicalGroups = [
+            { title: "Ürək-damar xəstəlikləri", triggerName: "heart", followUps: ["Revmakardit", "Miokard infarktı", "Oynaqların kəskin revmatizmi", "Böyrək xəstəlikləri", "Stenokardiya", "Ürək çatışmazlığı", "Digər"] },
+            { title: "Arterial təzyiq", triggerName: "pressure", followUps: ["Hipertenziya", "Hipotenziya"] },
+            { title: "Qan sisteminin xəstəlikləri", triggerName: "blood", followUps: ["Hemorragik diatez", "Anemiya", "Laxtalanma sisteminin anomaliyası", "Leykemiya", "Digər"] },
+            { title: "QBB xəstəlikləri", triggerName: "ent", followUps: ["Frontal Sinusit", "Maksillar Sinusit", "Tonzil Hipertrofiyası", "Digər"] },
+            { title: "Ağciyər xəstəlikləri", triggerName: "lung", followUps: ["Astma", "Keçirilmiş tuberkulyoz", "Aktiv tuberkulyoz", "Bronxit", "Digər"] },
+            { title: "Psixo-nevroloji xəstəliklər", triggerName: "neuro", followUps: ["Epilepsiya", "Nevralgiyalar", "Paraliç", "Psixiatrik müalicə", "Digər"] },
+            { title: "Qaraciyər xəstəlikləri", triggerName: "liver", followUps: ["Hepatit A", "Hepatit B", "Hepatit C", "Qaraciyər çatışmazlığı", "Digər"] },
+            { title: "Endokrin xəstəlikləri", triggerName: "endo", followUps: ["Diabet", "Hipotireoz", "Paratireoz", "Hipertireoz", "Digər"] },
+            { title: "Mədə-bağırsaq xəstəlikləri", triggerName: "gi", followUps: ["Xora", "Qastrit", "Digər"] },
+            { title: "İstifadə edilən dərmanlar", triggerName: "meds", followUps: ["Antihistamin", "Antiepileptik", "İnsulin", "Antihipertenziv", "Hormonal", "Ürək dərmanları", "Neyroleptik", "Sitostatik", "Antikoaqulyant", "Digər"] },
+            { title: "Hamiləlik", triggerName: "pregnancy", followUps: ["(həftə)"] },
+            { title: "Digər xəstəliklər", triggerName: "other_diseases", followUps: ["Revmatoid artrit", "Transplantasiya", "Radioterapiya", "Sifilis", "QİÇS", "Kimya terapiya", "Hemodializ", "Adrenalin çatışmazlığı", "Digər"] },
+            { title: "Vərdişlər", triggerName: "habits", followUps: ["Alkoqol", "Bruksizm", "Siqaret"] }
+        ];
+    
+        const groupContainer = document.getElementById("medicalGroups");
+    
+        function updateStatus(titleEl, inputs) {
+            const selectInputs = [...inputs].filter(inp => inp.tagName === "SELECT");
+            const allFilled = selectInputs.every(inp => inp.value.trim() !== "");
+            if (allFilled) {
+                titleEl.style.color = "green";
+                if (!titleEl.innerText.endsWith("✔️")) titleEl.innerText += " ✔️";
+            } else {
+                titleEl.style.color = "";
+                titleEl.innerText = titleEl.innerText.replace(" ✔️", "");
+            }
+        }
+    
+        function renderGroups() {
+            groupContainer.innerHTML = "";
+            const gender = document.getElementById("genderSelect").value;
+    
+            medicalGroups.forEach(group => {
+                if (group.triggerName === "pregnancy" && gender === "Kişi") return;
+    
+                const groupDiv = document.createElement("div");
+                groupDiv.className = "question-group";
+                groupDiv.dataset.trigger = group.triggerName;
+    
+                const title = document.createElement("div");
+                title.innerText = group.title;
+                title.className = "section-title";
+                title.style.cursor = "pointer";
+    
+                const followUpDiv = document.createElement("div");
+                followUpDiv.style.display = "none";
+                followUpDiv.style.marginTop = "10px";
+    
+                const inputs = [];
+    
+                group.followUps.forEach((text, i) => {
+                    const subDiv = document.createElement("div");
+                    const label = document.createElement("label");
+                    label.innerText = text;
+    
+                    let input;
+                    if (text === "Digər" || text === "(həftə)") {
+                        input = document.createElement("input");
+                        input.type = "text";
+                        input.placeholder = text === "Digər" ? "Digər qeyd edin..." : "Neçə həftə?";
+                        input.name = `group_${group.triggerName}_${i}`;
+                    } else {
+                        input = document.createElement("select");
+                        input.name = `group_${group.triggerName}_${i}`;
+                        ["", "Bəli", "Xeyr"].forEach(val => {
+                            const opt = document.createElement("option");
+                            opt.value = val;
+                            opt.innerText = val;
+                            input.appendChild(opt);
+                        });
+                    }
+    
+                    input.addEventListener("change", () => updateStatus(title, inputs));
+                    inputs.push(input);
+    
+                    label.appendChild(input);
+                    subDiv.appendChild(label);
+                    followUpDiv.appendChild(subDiv);
+                });
+    
+                title.addEventListener("click", () => {
+                    followUpDiv.style.display = followUpDiv.style.display === "block" ? "none" : "block";
+                });
+    
+                groupDiv.appendChild(title);
+                groupDiv.appendChild(followUpDiv);
+                groupContainer.appendChild(groupDiv);
+            });
+        }
+    
+        document.getElementById("genderSelect").addEventListener("change", renderGroups);
+        document.getElementById("citizenshipSelect").addEventListener("change", function () {
+            document.getElementById("otherCitizenshipField").style.display = this.value === "Digər" ? "block" : "none";
+        });
+    
+        document.getElementById("photoUpload").addEventListener("change", function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = new Image();
+                img.src = reader.result;
+                img.style.maxWidth = "100%";
+                document.getElementById("photoPreview").innerHTML = "";
+                document.getElementById("photoPreview").appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    
+        document.getElementById("contractForm").onsubmit = async function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const answers = [];
+    
+            for (let [key, val] of formData.entries()) {
+                if (key.startsWith("group_")) {
+                    answers.push(val || "");
+                }
+            }
+    
+            const citizenship = formData.get("citizenship") === "Digər"
+                ? document.getElementById("otherCitizenshipInput").value
+                : formData.get("citizenship");
+    
+            const data = {
+                first_name: formData.get("first_name"),
+                last_name: formData.get("last_name"),
+                middle_name: formData.get("middle_name"),
+                birth_date: formData.get("birth_date"),
+                phone: formData.get("phone"),
+                gender: formData.get("gender"),
+                email: formData.get("email"),
+                address: formData.get("address"),
+                citizenship: citizenship,
+                answers: answers
+            };
+    
+            const file = document.getElementById("photoUpload").files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    data.photo = reader.result;
+                    await sendForm(data);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                await sendForm(data);
+            }
+        };
+    
+        async function sendForm(data) {
+            await fetch("/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            document.getElementById("contractForm").style.display = "none";
+            document.getElementById("thanksMessage").style.display = "block";
+        }
+    
+        renderGroups();
+    });
+    </script>
+    </body>
+    </html>
+    
+    

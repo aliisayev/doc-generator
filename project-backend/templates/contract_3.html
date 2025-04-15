@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <style>
+       body {
+            font-family: 'DejaVu', sans-serif;
+            padding: 40px;
+            line-height: 1.6;
+            font-size: 14pt;
+        }
+        .title {
+            text-align: center;
+            font-size: 20pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        p {
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="title">STOMATOLOJİ XİDMƏT MÜQAVİLƏSİ №</div>
+
+<p>Xəstə Anamnez Forması</p>
+
+<p>
+    HÖRMƏTLİ PASİYENT!
+    Stomatoloji müalicə prosesinə ümumi xəstəliklər təsir göstərə bilər, buna görə də bu anketi diqqətlə doldurmağınızı xahiş edirik.
+    Biz zəmanət veririk ki, anketdə qeyd etdiyiniz məlumatlar yalnız sağlamlığınızı nəzərə alaraq müalicənizi seçmək üçün istifadə olunacaq və üçüncü şəxslərə təqdim edilməyəcəkdir.
+    
+    ANKET (pasiyent tərəfindən doldurulur)
+    
+    
+</p>
+
+<h3>Xəstə Məlumatları</h3>
+<p> {{.LastName}}, {{.FirstName}}, {{.MiddleName }} 	Doğum tarixi: {{.BirthDate}}	Cins: {{.Gender}}	Vətəndəşı: {{.Citizenship}} {{.Phone}} {{.Address}}</p>
+
+<h3> Sağlamlıq vəziyyətim haqqında aşağıdakıları bildirirəm:</h3>
+<p> Sonuncu dəfə stomatoloq müayinəsi: (Ay və ili qeyd edin) 		_______/ 20__
+
+    Hər hansı diş müalicəsi zamanı allergiyanız olubmu?		☐ Bəli ☐ Xeyr
+    
+    Anesteziyaya qarşı həssaslıq və ya allergiya varmı?		☐ Bəli ☐ Xeyr
+    Qan qrupunuz:								            ____________
+   
+     </p>
+
+
+     <h3>Aşağıdakı xəstəliklərdən əziyyət çəkirsinizmi?</h3>
+     <h3>Ürək-damar xəstəlikləri </h3>
+     <p>Revmakardit: {{index .Answers 0}}</p>
+     <p>Miokard infarktı : {{index .Answers 1}}</p>
+     <p>Oynaqların kəskin revmatizmi: {{index .Answers 2}}</p>
+     <p>Böyrək xəstəlikləri: {{index .Answers 3}}</p>
+     <p>Stenokardiya: {{index .Answers 4}}</p>
+     <p>Ürək çatışmazlığı: {{index .Answers 5}}</p>
+     <p>Digər: {{index .Answers 6}}</p>
+     
+     <h3>Arterial təzyiq</h3>
+     <p>Hipertenziya: {{index .Answers 7}}</p>
+     <p>Hipotenziya: {{index .Answers 8}}</p>
+     
+     <h3>Qan sisteminin xəstəlikləri</h3>
+     <p>Hemorragik diatez: {{index .Answers 9}}</p>
+     <p>Anemiya: {{index .Answers 10}}</p>
+     <p>Laxtalanma sisteminin anomaliyası: {{index .Answers 11}}</p>
+     <p>Leykemiya: {{index .Answers 12}}</p>
+     <p>Digər: {{index .Answers 13}}</p>
+
+     <h3>QBB xəstəlikləri </h3>
+<p>Frontal Sinusit: {{index .Answers 14}}</p>
+<p>Maksillar Sinusit: {{index .Answers 15}}</p>
+<p>Tonzil Hipertrofiyası: {{index .Answers 16}}</p>
+<p>Digər: {{index .Answers 17}}</p>
+
+<h3>Ağciyər xəstəlikləri</h3>
+<p>Astma: {{index .Answers 18}}</p>
+<p>Keçirilmiş tuberkulyoz: {{index .Answers 19}}</p>
+<p>QİÇS: {{index .Answers 20}}</p>
+<p>Kimya terapiya: {{index .Answers 21}}</p>
+<p>Hemorragik diatez: {{index .Answers 22}}</p>
+<p>Anemiya: {{index .Answers 23}}</p>
+<p>Laxtalanma sisteminin anomaliyası: {{index .Answers 24}}</p>
+<p>Leykemiya: {{index .Answers 25}}</p>
+<p>Digər: {{index .Answers 26}}</p>
+
+<h3>Psixo-nevroloji xəstəlikləri</h3>
+<p>Epilepsiya: {{index .Answers 27}}</p>
+<p>Nevralgiyalar: {{index .Answers 28}}</p>
+<p>Paraliç: {{index .Answers 29}}</p>
+<p>Psixiatrik müalicə: {{index .Answers 30}}</p>
+<p>Digər: {{index .Answers 31}}</p>
+
+
+<h3>Qaraciyər xəstəlikləri</h3>
+<p>Hepatit A: {{index .Answers 32}}</p>
+<p>Hepatit B: {{index .Answers 33}}</p>
+<p>Hepatit C: {{index .Answers 34}}</p>
+<p>Qaraciyər çatışmazlığı: {{index .Answers 35}}</p>
+<p>Digər: {{index .Answers 36}}</p>
+
+<h3>Endokrin xəstəlikləri</h3>
+<p>Diabet: {{index .Answers 37}}</p>
+<p>Hipotireoz: {{index .Answers 38}}</p>
+<p>Paratireoz: {{index .Answers 39}}</p>
+<p>Hipertireoz: {{index .Answers 40}}</p>
+<p>Digər: {{index .Answers 41}}</p>
+
+<h3>Mədə-bağırsaq xəstəlikləri</h3>
+<p>Xora: {{index .Answers 42}}</p>
+<p>Qastrit: {{index .Answers 43}}</p>
+<p>Digər: {{index .Answers 44}}</p>
+
+<h3>İstifadə edilən dərmanlar</h3>
+<p>Antihistamin dərmanlar: {{index .Answers 45}}</p>
+<p>Antiepileptiklər: {{index .Answers 46}}</p>
+<p>İnsulin: {{index .Answers 47}}</p>
+<p>Antihipertenziv: {{index .Answers 48}}</p>
+<p>Hormonal preparatlar: {{index .Answers 49}}</p>
+<p>Ürək dərmanları: {{index .Answers 50}}</p>
+<p>Neyroleptiklər: {{index .Answers 51}}</p>
+<p>Sitostatiklər: {{index .Answers 52}}</p>
+<p>Antikoaqulyantlar: {{index .Answers 53}}</p>
+<p>Digər: {{index .Answers 54}}</p>
+
+
+<h3>Hamiləlik</h3>
+<p>(həftə): {{index .Answers 55}}</p>
+
+<h3>Vərdişlər  </h3>
+<p>Alkoqol: {{index .Answers 56}}</p>
+<p>Brüksizm: {{index .Answers 57}}</p>
+<p>Siqaret çəkirsinizmi: {{index .Answers 58}}</p>
+<p>Digər: {{index .Answers 59}}</p>
+
+<h3>Əlavə qeydlər:</h3>
+<p>Mən anketdə göstərilən bütün suallara səmimi cavab verdim və sağlamlıq vəziyyətim haqqında əlavə olaraq aşağıdakıları bildirmək istəyirəm:
+    Mənə məlumdur ki, yalnız mütəmadi profilaktik müayinələr (hər 6 aydan bir) müalicə və protezlərin uzunmüddətli nəticələrini təmin edə bilər.
+    Stomatoloqa müraciət etməmişdən öncə hər hansı dərman qəbul etdiyim təqdirdə, bunu həkimə bildirməli olduğumu başa düşürəm.
+    </p>
+
+
+<h3> Pasiyentin imzası	:____________
+
+
+
+
+
+    Tarix			: {{.Today}}
+    
+    </h3>
+
+</body>
+</html>

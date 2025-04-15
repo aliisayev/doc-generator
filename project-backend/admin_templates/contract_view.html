@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Müqavilə Baxış</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .json-box {
+      background: #f8f9fa;
+      border-radius: 5px;
+      padding: 10px;
+      font-family: monospace;
+      max-height: 300px;
+      overflow: auto;
+    }
+    .contract-photo img {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .info-box {
+      background: #f1f1f1;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .info-title {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    @media print {
+      nav, button, form, a.btn, .navbar {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-dark px-3 mb-4">
+    <a class="navbar-brand d-flex align-items-center" href="/admin">
+      <img src="/frontend/logo.jpg" alt="Logo" style="width: 140px; height: 48px; object-fit: contain;">
+
+      Müqavilə Paneli
+    </a>
+  </nav>
+
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="contract-photo">
+          {{if .PhotoPath}}
+            <img src="/{{.PhotoPath}}" alt="Foto">
+          {{else}}
+            <div class="text-muted"><i>Foto yoxdur</i></div>
+          {{end}}
+        </div>
+        <div class="mt-3">
+          <div><strong>Ad:</strong> {{.Form.FirstName}} {{.Form.LastName}}</div>
+          <div><strong>Telefon:</strong> {{.Form.Phone}}</div>
+          <div><strong>Email:</strong> {{.Form.Email}}</div>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="info-box">
+          <div class="info-title">📋 Şəxsi Məlumatlar</div>
+          <p><strong>Ad:</strong> {{.Form.FirstName}}</p>
+          <p><strong>Soyad:</strong> {{.Form.LastName}}</p>
+          <p><strong>Atasının adı:</strong> {{.Form.MiddleName}}</p>
+          <p><strong>Doğum tarixi:</strong> {{.Form.BirthDate}}</p>
+          <p><strong>Cins:</strong> {{.Form.Gender}}</p>
+          <p><strong>Vətəndaşlıq:</strong> {{.Form.Citizenship}}</p>
+          <p><strong>Ünvan:</strong> {{.Form.Address}}</p>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">Pasiyentin xəstəlikəri</div>
+          {{if .PositiveAnswers}}
+            <ul>
+              {{range .PositiveAnswers}}
+              <li>{{.}}</li>
+              {{end}}
+            </ul>
+          {{else}}
+            <div class="text-muted">Pozitiv cavab yoxdur.</div>
+          {{end}}
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">📄 ZIP Faylı</div>
+          <p><a href="/{{.PDFPath}}" target="_blank" class="btn btn-outline-primary">
+            <i class="fas fa-download"></i> Yüklə
+          </a></p>
+        </div>
+
+        <div class="d-flex gap-3 flex-wrap">
+          <form action="/admin/send/{{.ID}}?force=true" method="POST" class="d-inline">
+            <button class="btn btn-warning">
+              <i class="fas fa-paper-plane"></i> Yenidən göndər
+            </button>
+          </form>
+
+          <button class="btn btn-secondary" onclick="window.print()">
+            <i class="fas fa-print"></i> Çap et
+          </button>
+
+          <a href="/admin" class="btn btn-outline-dark">⬅️ Geri panelə</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
